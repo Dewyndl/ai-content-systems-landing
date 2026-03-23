@@ -40,7 +40,7 @@ const app = document.querySelector('#app');
 app.innerHTML = `
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Signal Systems home"><span class="brand-mark">✳</span><span>signal<span class="brand-muted">/</span>systems</span></a>
-    <button class="menu-toggle" aria-expanded="false" aria-controls="site-nav"><span></span><span></span></button>
+    <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span></button>
     <nav id="site-nav" class="site-nav" aria-label="Main navigation">
       <a href="#systems">Systems</a><a href="#method">Method</a><a href="#pricing">Investment</a><a href="#faq">FAQ</a>
       <a class="nav-cta" href="#contact">Talk to us <span>↗</span></a>
