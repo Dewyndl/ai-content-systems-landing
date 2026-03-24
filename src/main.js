@@ -106,7 +106,7 @@ document.querySelectorAll('.solution-card').forEach((card) => {
     card.classList.add('is-active');
   };
   card.addEventListener('click', () => { activate(); window.dispatchEvent(new CustomEvent('signal:solution-selected', { detail: { solution: card.dataset.solution } })); });
-  card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); } });
+  card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); window.dispatchEvent(new CustomEvent('signal:solution-selected', { detail: { solution: card.dataset.solution } })); } });
 });
 
 const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); }), { threshold: 0.12 });
