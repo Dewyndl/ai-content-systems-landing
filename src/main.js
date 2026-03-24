@@ -105,7 +105,7 @@ document.querySelectorAll('.solution-card').forEach((card) => {
     document.querySelectorAll('.solution-card').forEach((item) => item.classList.remove('is-active'));
     card.classList.add('is-active');
   };
-  card.addEventListener('click', activate);
+  card.addEventListener('click', () => { activate(); window.dispatchEvent(new CustomEvent('signal:solution-selected', { detail: { solution: card.dataset.solution } })); });
   card.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); } });
 });
 
