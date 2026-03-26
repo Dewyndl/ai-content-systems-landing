@@ -120,5 +120,5 @@ document.querySelector('#lead-form').addEventListener('submit', (event) => {
   form.classList.remove('has-error');
   status.textContent = 'Thanks — your signal is on its way. We’ll be in touch within two working days.';
   form.reset();
-  window.dispatchEvent(new CustomEvent('signal:lead-submitted', { detail: { source: 'landing-form' } }));
+  window.dispatchEvent(new CustomEvent('signal:lead-submitted', { detail: { source: 'landing-form', hasMessage: Boolean(form.message.value.trim()) } }));
 });
