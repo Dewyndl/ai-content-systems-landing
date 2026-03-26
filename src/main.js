@@ -36,6 +36,7 @@ const solutions = [
 ];
 
 const app = document.querySelector('#app');
+if (!app) throw new Error('Landing mount element is missing');
 
 app.innerHTML = `
   <header class="site-header">
