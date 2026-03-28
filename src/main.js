@@ -121,6 +121,7 @@ document.querySelector('#lead-form').addEventListener('submit', (event) => {
   if (!form.checkValidity()) { form.classList.add('has-error'); status.textContent = 'Please complete the fields above so we can reply.'; form.reportValidity(); return; }
   form.classList.remove('has-error');
   status.textContent = 'Thanks — your signal is on its way. We’ll be in touch within two working days.';
+  form.querySelector('button').disabled = true;
   form.reset();
   window.dispatchEvent(new CustomEvent('signal:lead-submitted', { detail: { source: 'landing-form', hasMessage: Boolean(form.message.value.trim()) } }));
 });
