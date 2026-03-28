@@ -100,6 +100,7 @@ nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () =>
   menuToggle.setAttribute('aria-expanded', 'false');
   nav.classList.remove('is-open');
 }));
+document.querySelectorAll('.button, .nav-cta').forEach((link) => link.addEventListener('click', () => window.dispatchEvent(new CustomEvent('signal:cta-clicked', { detail: { label: link.textContent.trim() } }))));
 
 document.querySelectorAll('.solution-card').forEach((card) => {
   const activate = () => {
