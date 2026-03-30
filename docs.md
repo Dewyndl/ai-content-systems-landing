@@ -41,7 +41,7 @@ npm run build
 npm run preview
 ```
 
-`dist/` is generated output and is excluded from git. The current production build completes with Vite and has no dependency audit findings after installation.
+`dist/` is generated output and is excluded from git. The current production build completes with Vite and has no dependency audit findings after installation. Hashed assets are safe to cache between deploys.
 
 ## Page structure
 
