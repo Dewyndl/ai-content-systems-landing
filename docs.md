@@ -88,6 +88,8 @@ Every offer should continue to answer these questions before publication:
 
 ## Interactions
 
+Events are plain browser `CustomEvent`s so analytics can be added without coupling the page to a vendor.
+
 - The mobile menu toggles with an accessible `aria-expanded` state and closes after navigation.
 - Solution rows activate on click, Enter, or Space. The active row gets a stronger background and arrow treatment.
 - Elements with `.reveal` fade and lift into place when they enter the viewport. The observer is progressive enhancement; all content remains in the DOM without it.
