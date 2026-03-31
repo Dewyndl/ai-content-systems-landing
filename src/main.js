@@ -113,6 +113,7 @@ document.querySelectorAll('.solution-card').forEach((card) => {
 
 const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); }), { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach((item) => observer.observe(item));
+window.addEventListener('signal:lead-submitted', (event) => console.debug('Signal lead ready for adapter', event.detail));
 
 document.querySelector('#lead-form').addEventListener('submit', (event) => {
   event.preventDefault();
