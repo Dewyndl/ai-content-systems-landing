@@ -146,3 +146,7 @@ The page currently loads fonts from Google Fonts. For a fully self-contained or 
 - [x] Production build succeeds with Vite.
 - [ ] Live webhook delivery test.
 - [ ] Final SEO/social assets and performance evidence.
+
+## Change history
+
+The git history is intentionally granular: each commit represents a small product or handoff decision so the implementation can be reviewed as a sequence rather than a single generated drop.
