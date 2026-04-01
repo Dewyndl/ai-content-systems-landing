@@ -27,6 +27,7 @@ a { color:inherit; text-decoration:none; }
 .button-primary:hover { transform:translateY(-2px); }
 .site-nav a { transition:color .2s ease; }
 .faq summary { transition:color .2s ease; }.faq summary:hover { color:var(--orange); }
+@media (max-width:430px) { .hero h1 { font-size:54px; }.hero-actions { align-items:flex-start; flex-direction:column; gap:20px; }.hero-visual { margin-left:-18px; margin-right:-18px; transform:scale(.78); min-height:385px; }.trust-inner div { letter-spacing:.03em; } }
 .button-light:hover { background:var(--lime); }
 .lead-form input:invalid:not(:placeholder-shown),.lead-form textarea:invalid:not(:placeholder-shown) { border-color:var(--orange); }
 .lead-form button:disabled { cursor:default; opacity:.7; }
