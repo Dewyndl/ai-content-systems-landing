@@ -115,14 +115,36 @@ const observer = new IntersectionObserver((entries) => entries.forEach((entry) =
 document.querySelectorAll('.reveal').forEach((item) => observer.observe(item));
 window.addEventListener('signal:lead-submitted', (event) => console.debug('Signal lead ready for adapter', event.detail));
 
-document.querySelector('#lead-form').addEventListener('submit', (event) => {
+const leadForm = document.querySelector('#lead-form');
+const honeypot = document.createElement('input');
+honeypot.type = 'text';
+honeypot.name = 'website';
+honeypot.tabIndex = -1;
+honeypot.autocomplete = 'off';
+honeypot.className = 'form-trap';
+leadForm.append(honeypot);
+
+leadForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   const status = form.querySelector('.form-status');
+  const button = form.querySelector('button');
   if (!form.checkValidity()) { form.classList.add('has-error'); status.textContent = 'Please complete the fields above so we can reply.'; form.reportValidity(); return; }
+  const payload = Object.fromEntries(new FormData(form));
+  payload.consent = form.consent.checked;
+  payload.page = window.location.pathname;
   form.classList.remove('has-error');
-  status.textContent = 'Thanks — your signal is on its way. We’ll be in touch within two working days.';
-  form.querySelector('button').disabled = true;
-  form.reset();
-  window.dispatchEvent(new CustomEvent('signal:lead-submitted', { detail: { source: 'landing-form', hasMessage: Boolean(form.message.value.trim()) } }));
+  button.disabled = true;
+  status.textContent = 'Sending your signal…';
+  try {
+    const response = await fetch('/api/leads', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!response.ok) throw new Error('Lead request failed');
+    status.textContent = 'Thanks — your signal is on its way. We’ll be in touch within two working days.';
+    form.reset();
+    window.dispatchEvent(new CustomEvent('signal:lead-submitted', { detail: { source: 'landing-form', hasMessage: Boolean(payload.message?.trim()) } }));
+  } catch (error) {
+    button.disabled = false;
+    status.textContent = 'We could not send that just now. Please try again or email us directly.';
+    form.classList.add('has-error');
+  }
 });
