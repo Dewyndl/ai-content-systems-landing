@@ -16,12 +16,17 @@ The public page does not claim autonomous publishing. The copy explicitly positi
 ## Stack and file map
 
 - `index.html` — document shell, metadata, and entry point.
-- `src/main.js` — page markup, catalogue data, navigation behavior, solution selection, reveal observer, and enquiry form behavior.
+- `src/main.js` — page markup, catalogue data, navigation behavior, solution selection, reveal observer, and API-backed enquiry form behavior.
 - `src/style.css` — design tokens, responsive layout, typography, components, and motion.
-- `package.json` — Vite scripts and the only development dependency.
+- `server/lead-service.js` — shared validation, rate limiting, payload shaping, and webhook delivery.
+- `server/index.js` — dependency-free local production server for static files and `/api/leads`.
+- `api/leads.js` — Vercel-compatible serverless version of the lead endpoint.
+- `test/lead-service.test.js` — built-in Node test coverage for the lead boundary.
+- `public/` — favicon, robots file, sitemap, and privacy page.
+- `package.json` — Vite, local server, and test scripts.
 - `docs.md` — this implementation and handoff record.
 
-This is intentionally a small Vite/vanilla JavaScript project. It has no runtime UI framework, server, or backend dependency. That keeps the custom portion portable to a Tilda Zero Block or HTML/code block later: the content and interaction logic are already isolated in one entry module.
+This is intentionally a small Vite/vanilla JavaScript project with a dependency-free Node delivery layer. The browser bundle remains portable to a Tilda Zero Block or HTML/code block, while the standalone version now has a real server-side lead boundary.
 
 ## Run locally
 
@@ -39,6 +44,20 @@ Create a production bundle with:
 ```bash
 npm run build
 npm run preview
+```
+
+For a local production-like server, copy `.env.example` to your environment and build first, then run:
+
+```bash
+LEAD_WEBHOOK_URL=https://your-webhook.example npm start
+```
+
+The server listens on `http://localhost:4173` by default. Set `PORT` to change it. Without `LEAD_WEBHOOK_URL`, valid lead submissions return a deliberate `503` instead of pretending delivery succeeded.
+
+Run automated checks with:
+
+```bash
+npm test
 ```
 
 `dist/` is generated output and is excluded from git. The current production build completes with Vite and has no dependency audit findings after installation. Hashed assets are safe to cache between deploys.
@@ -98,15 +117,16 @@ Events are plain browser `CustomEvent`s so analytics can be added without coupli
 
 ## Lead handling boundary
 
-The current form is a front-end demonstration. It does not send personal data to a third party. Before production, replace the submit handler with a server-side or trusted automation endpoint that:
+The form posts JSON to `/api/leads`. The endpoint:
 
-1. validates and rate-limits the request server-side;
-2. adds a honeypot or managed spam check;
-3. sends only the necessary fields to the chosen CRM/webhook;
-4. stores consent timestamp and page/source metadata;
-5. returns a generic success response without exposing provider errors.
+1. validates name, email, message, consent, and maximum lengths;
+2. drops bot submissions using a visually hidden `website` honeypot;
+3. rate-limits each client IP to five attempts per ten minutes;
+4. sends a normalized event to `LEAD_WEBHOOK_URL` with no secret in client code;
+5. returns `202` only after the webhook accepts the request;
+6. returns generic errors so provider details are not exposed.
 
-Do not put webhook secrets in `src/main.js` or any client-delivered file. If this is embedded into Tilda, use a Tilda form integration or a server-side relay. The existing custom event can still be used for privacy-conscious analytics, but it should be connected only after the consent and tracking policy is agreed.
+The webhook payload event is `signal.lead.created` and contains `receivedAt`, `source`, `page`, `referrer`, and the consented lead fields. Do not put webhook secrets in `src/main.js` or any client-delivered file. If this is embedded into Tilda, point the form at the same serverless endpoint or use a Tilda integration.
 
 ## Design system
 
@@ -124,11 +144,11 @@ The page currently loads fonts from Google Fonts. For a fully self-contained or 
 
 ## Deployment checklist
 
-- Set the canonical URL and add a canonical link in `index.html`.
-- Add the final social preview image and Open Graph/Twitter metadata.
-- Replace the demo form handler with the approved webhook/CRM relay.
+- Replace the placeholder `signal.systems` domain in `index.html`, `public/robots.txt`, and `public/sitemap.xml` if the final domain differs.
+- Add the final social preview image and `og:image` metadata.
+- Set `LEAD_WEBHOOK_URL` in the hosting provider's secret environment settings.
 - Confirm privacy, cookie, and analytics copy with the data controller.
-- Add a real favicon and, if useful, a `robots.txt` and `sitemap.xml`.
+- Replace the placeholder legal contact wording in `privacy.html` with the responsible legal entity and address.
 - Test the production bundle on current Chrome, Safari, Firefox, and a real narrow mobile viewport.
 - Verify keyboard focus, visible error states, reduced-motion preference, and screen-reader labels.
 - Capture a Lighthouse/Pagespeed result and store it with the portfolio evidence.
@@ -141,10 +161,12 @@ The page currently loads fonts from Google Fonts. For a fully self-contained or 
 - [x] One-time vs recurring cost language.
 - [x] Workflow method and comparison table.
 - [x] FAQ and accessible native disclosure controls.
-- [x] Form fields, consent checkbox, browser validation, and success state.
+- [x] Form fields, consent checkbox, browser validation, API submission, and success state.
+- [x] Server-side validation, honeypot, rate limit, and webhook delivery boundary.
+- [x] Privacy page, favicon, robots file, and sitemap.
 - [x] No autonomous-publishing claim.
-- [x] Production build succeeds with Vite.
-- [ ] Live webhook delivery test.
+- [x] Production build succeeds with Vite and the local server serves the bundle.
+- [ ] Live webhook delivery test with the chosen CRM/webhook.
 - [ ] Final SEO/social assets and performance evidence.
 
 ## Change history
