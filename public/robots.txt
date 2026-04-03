@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://signal.systems/sitemap.xml
